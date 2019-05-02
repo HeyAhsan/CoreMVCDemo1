@@ -1,0 +1,124 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<h2>Index</h2>
+
+<hr />
+<span style="margin-top:15px; color: silver;">Note: 100 products are loaded in memory to query</span>
+<p>
+    <asp:Label ID="lblErrorMessage" Text="Vessel:" style="color:coral"></asp:Label>
+</p>
+<p>
+    <label for="txtProductID" style="width:130px;">Product ID</label>
+    <input type="text" id="txtProductID" name="txtProductID" value="1" />
+<p />
+<p>
+    <label for="txtProductName" style="width:130px;">Product Name</label>
+    <input type="text" id="txtProductName" name="txtProductName" />
+<p />
+<p>
+    <label for="txtProductPrice" style="width:130px;">Product Price</label>
+    <input type="text" id="txtProductPrice" name="txtProductPrice" /> <br\>
+<p />
+<p>
+    <label for="txtProductQuantity" style="width:130px;">Product Quantity</label>
+    <input type="text" id="txtProductQuantity" name="txtProductQuantity" />
+<p />
+<p>
+
+    <input id="btnSubmit" name="btnSubmit" type="submit" />
+    <input id="btnReset" name="btnReset" type="reset" />
+
+    
+
+<p />
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+    $(function () {
+
+        $("#btnSubmit").click(function () {
+            var productID = $("#txtProductID").val();
+            $.ajax({
+                type: "Post",
+                url: "Module/GetProducts",  //controller and action method.
+                //set parameters.
+                data: { ProductID: productID },
+                dataType: 'json',
+                success: function (RestltSet) {
+                    if (RestltSet.length > 0) {
+                        $('#lblErrorMessage').text("");
+                        $("input[name='txtProductName']").val(RestltSet[0].productName);
+                        $("input[name='txtProductPrice']").val(RestltSet[0].productPrice);
+                        $("input[name='txtProductQuantity']").val(RestltSet[0].productQuantity);
+                    }
+                    else {
+                        $('#lblErrorMessage').text("No matching record found.");
+                        $("input[name='txtProductName']").val("");
+                        $("input[name='txtProductPrice']").val("");
+                        $("input[name='txtProductQuantity']").val("");
+                    }
+                },
+                error: function (error) {
+                    alert("Error Reson :" + error);
+                }
+            });
+        });
+
+        $("#btnReset").click(function () {
+            $("input[name='txtProductName']").val("");
+            $("input[name='txtProductPrice']").val("");
+            $("input[name='txtProductQuantity']").val("");
+        });
+
+    });
+</script>
+
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+
+<div id="jsGrid"></div>
+
+<script>
+    var clients = [
+        { "Name": "Otto Clay", "Age": 25, "Country": 1, "Address": "Ap #897-1459 Quam Avenue", "Married": false },
+        { "Name": "Connor Johnston", "Age": 45, "Country": 2, "Address": "Ap #370-4647 Dis Av.", "Married": true },
+        { "Name": "Lacey Hess", "Age": 29, "Country": 3, "Address": "Ap #365-8835 Integer St.", "Married": false },
+        { "Name": "Timothy Henson", "Age": 56, "Country": 1, "Address": "911-5143 Luctus Ave", "Married": true },
+        { "Name": "Ramona Benton", "Age": 32, "Country": 3, "Address": "Ap #614-689 Vehicula Street", "Married": false }
+    ];
+
+    var countries = [
+        { Name: "", Id: 0 },
+        { Name: "United States", Id: 1 },
+        { Name: "Canada", Id: 2 },
+        { Name: "United Kingdom", Id: 3 }
+    ];
+
+    $("#jsGrid").jsGrid({
+        width: "100%",
+        height: "400px",
+
+        inserting: true,
+        editing: true,
+        sorting: true,
+        paging: true,
+
+        data: clients,
+
+        fields: [
+            { name: "Name", type: "text", width: 150, validate: "required" },
+            { name: "Age", type: "number", width: 50 },
+            { name: "Address", type: "text", width: 200 },
+            { name: "Country", type: "select", items: countries, valueField: "Id", textField: "Name" },
+            { name: "Married", type: "checkbox", title: "Is Married", sorting: false },
+            { type: "control" }
+        ]
+    });
+</script>
+
